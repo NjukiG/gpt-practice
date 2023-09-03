@@ -11,7 +11,7 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 import { useState } from "react";
 function App() {
-  console.log(process.env.REACT_APP_API_KEY);
+  // console.log(process.env.REACT_APP_API_KEY);
   const API_KEY = process.env.REACT_APP_API_KEY;
   const [messages, setMessages] = useState([
     {
@@ -37,6 +37,34 @@ function App() {
     // Set the typing indicator here
     setTyping(true);
     // Process mesages to chatgpt (send it and see responce)
+    await processMessageToChatGPT(newMessages);
+  };
+
+  const processMessageToChatGPT = async (chatMessages) => {
+    // Format messages for chatGPT API
+    // API is expecting objects in format of { role: "user" or "assistant", "content": "message here"}
+    // So we need to reformat
+
+    let apiMessages = chatMessages.map((messageObject) => {
+      let role = "";
+      if (messageObject.sender === "ChatGPT") {
+        role = "assistant";
+      } else {
+        role = "user";
+      }
+      return { role: role, content: messageObject.message };
+    });
+
+    
+
+    await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(apiRequestBody)
+    });
   };
   return (
     <div className="App">

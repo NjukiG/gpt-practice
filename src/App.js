@@ -17,9 +17,24 @@ function App() {
       sender: "ChatGPT",
     },
   ]);
+
+  const handleSend = async (message) => {
+    const newMessage = {
+      message: message,
+      sender: "user",
+      direction: "outgong"
+    };
+
+    // All the old mesages plus the new one after.
+    const newMessages = [...messages, newMessage];
+
+    // Update our messages state
+    setMessages(newMessages);
+    // Process mesages to chatgpt (send it and see responce)
+  };
   return (
     <div className="App">
-      <div style={{ position: "relative", height: "800px", width: "700px" }}>
+      <div style={{ position: "relative", height: "700px", width: "700px" }}>
         <MainContainer>
           <ChatContainer>
             <MessageList>
@@ -27,6 +42,10 @@ function App() {
                 return <Message key={i} model={message} />;
               })}
             </MessageList>
+            <MessageInput
+              placeholder="Ask a question here..."
+              onSend={handleSend}
+            />
           </ChatContainer>
         </MainContainer>
       </div>

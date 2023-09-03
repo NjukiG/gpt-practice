@@ -9,6 +9,7 @@ import {
   TypingIndicator,
 } from "@chatscope/chat-ui-kit-react";
 import { useState } from "react";
+
 function App() {
   const API_KEY = process.env.REACT_APP_API_KEY;
   const [messages, setMessages] = useState([
@@ -17,6 +18,7 @@ function App() {
       sender: "ChatGPT",
     },
   ]);
+
   const [typing, setTyping] = useState(false);
 
   const handleSend = async (message) => {
@@ -51,6 +53,7 @@ function App() {
       role: "system",
       content: "Explain all concepts like I'm a 10 year old!",
     };
+
     const apiRequestBody = {
       model: "gpt-3.5-turbo",
       messages: [systemMessage, ...apiMessages],
@@ -91,13 +94,14 @@ function App() {
         console.log("An error occured", err);
       });
   };
+
   return (
     <div className="App">
       <div style={{ position: "relative", height: "700px", width: "700px" }}>
         <MainContainer>
           <ChatContainer>
             <MessageList
-              scrollBehavior="smooth"
+              // scrollBehavior="smooth"
               typingIndicator={
                 typing ? (
                   <TypingIndicator content="ChatGPT is typing responce" />

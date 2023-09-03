@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import styles from "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {
@@ -11,7 +10,6 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 import { useState } from "react";
 function App() {
-  // console.log(process.env.REACT_APP_API_KEY);
   const API_KEY = process.env.REACT_APP_API_KEY;
   const [messages, setMessages] = useState([
     {
@@ -39,10 +37,6 @@ function App() {
   };
 
   const processMessageToChatGPT = async (chatMessages) => {
-    // Format messages for chatGPT API
-    // API is expecting objects in format of { role: "user" or "assistant", "content": "message here"}
-    // So we need to reformat
-
     let apiMessages = chatMessages.map((messageObject) => {
       let role = "";
       if (messageObject.sender === "ChatGPT") {
@@ -59,19 +53,16 @@ function App() {
     };
     const apiRequestBody = {
       model: "gpt-3.5-turbo",
-      messages: [
-        systemMessage,
-        ...apiMessages,
-        // {
-        //   "role": "system",
-        //   "content": "You are a helpful assistant."
-        // },
-        // {
-        //   "role": "user",
-        //   "content": "Hello!"
-        // }
-      ],
+      messages: [systemMessage, ...apiMessages],
     };
+    // {
+    //   "role": "system",
+    //   "content": "You are a helpful assistant."
+    // },
+    // {
+    //   "role": "user",
+    //   "content": "Hello!"
+    // }
 
     await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",

@@ -31,10 +31,8 @@ function App() {
     // All the old mesages plus the new one after.
     const newMessages = [...messages, newMessage];
 
-    // Update our messages state
     setMessages(newMessages);
 
-    // Set the typing indicator here
     setTyping(true);
     // Process mesages to chatgpt (send it and see responce)
     await processMessageToChatGPT(newMessages);
@@ -55,16 +53,52 @@ function App() {
       return { role: role, content: messageObject.message };
     });
 
-    
+    const systemMessage = {
+      role: "system",
+      content: "Explain all concepts like I'm a 10 year old!",
+    };
+    const apiRequestBody = {
+      model: "gpt-3.5-turbo",
+      messages: [
+        systemMessage,
+        ...apiMessages,
+        // {
+        //   "role": "system",
+        //   "content": "You are a helpful assistant."
+        // },
+        // {
+        //   "role": "user",
+        //   "content": "Hello!"
+        // }
+      ],
+    };
 
     await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(apiRequestBody)
-    });
+      body: JSON.stringify(apiRequestBody),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data.choices[0].message.content);
+        setMessages([
+          ...chatMessages,
+          {
+            message: data.choices[0].message.content,
+            sender: "ChatGPT",
+          },
+        ]);
+        setTyping(false);
+      })
+      .catch((err) => {
+        setTyping(false);
+        console.log("An error occured", err);
+      });
   };
   return (
     <div className="App">
@@ -72,6 +106,7 @@ function App() {
         <MainContainer>
           <ChatContainer>
             <MessageList
+              scrollBehavior="smooth"
               typingIndicator={
                 typing ? (
                   <TypingIndicator content="ChatGPT is typing responce" />
